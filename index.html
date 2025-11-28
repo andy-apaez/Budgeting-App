@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget with AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="gradient"></div>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="hero__meta">
+        <p class="eyebrow">Budgeting App</p>
+        <h1>Make a weekly or monthly plan in minutes</h1>
+        <p class="lede">Enter your income, drop in expenses, and watch the plan adjust. The math stays honest so you can stay intentional.</p>
+      </div>
+      <div class="hero__pillars">
+        <div class="pillar">
+          <p class="label">Income cadence</p>
+          <p class="value" id="incomeFrequencyLabel">Monthly</p>
+        </div>
+        <div class="pillar">
+          <p class="label">Leftover this period</p>
+          <p class="value" id="leftoverLabel">$0</p>
+        </div>
+        <div class="pillar">
+          <p class="label">Savings pace</p>
+          <p class="value" id="savingsPaceLabel">$0</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel grid">
+      <div>
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Step 1</p>
+            <h2>Capture your income</h2>
+          </div>
+        </div>
+        <form class="card" id="incomeForm">
+          <div class="field">
+            <label for="incomeAmount">Income amount</label>
+            <div class="input-wrap">
+              <span class="prefix">$</span>
+              <input id="incomeAmount" name="incomeAmount" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
+            </div>
+          </div>
+          <div class="field choices">
+            <label>Frequency</label>
+            <div class="toggle">
+              <button type="button" data-frequency="monthly" class="is-active">Monthly</button>
+              <button type="button" data-frequency="weekly">Weekly</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="savingsTarget">Savings goal (optional)</label>
+            <div class="input-wrap">
+              <span class="prefix">$</span>
+              <input id="savingsTarget" name="savingsTarget" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+            </div>
+            <p class="hint">We’ll use this to show if your plan supports the goal each period.</p>
+          </div>
+          <button class="primary" type="submit">Update plan</button>
+        </form>
+      </div>
+
+      <div>
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Step 2</p>
+            <h2>Map expenses</h2>
+          </div>
+          <div class="actions">
+            <button id="addExpense" class="ghost">Add expense</button>
+            <button id="loadSample" class="ghost">Load sample set</button>
+          </div>
+        </div>
+        <div class="card expenses">
+          <div class="expenses__head">
+            <span>Item</span>
+            <span>Amount</span>
+            <span>Cadence</span>
+            <span></span>
+          </div>
+          <div id="expenseList"></div>
+          <div class="expenses__footer">
+            <div>
+              <p class="label">Monthly total</p>
+              <p class="value" id="monthlyExpenses">$0</p>
+            </div>
+            <div>
+              <p class="label">Weekly total</p>
+              <p class="value" id="weeklyExpenses">$0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel results">
+      <div>
+        <p class="eyebrow">Step 3</p>
+        <h2>Your plan</h2>
+        <p class="lede">We normalize everything to monthly and weekly so the leftover stays consistent no matter how you get paid.</p>
+      </div>
+      <div class="results__grid">
+        <div class="card stats">
+          <div class="stat">
+            <p class="label">Monthly income</p>
+            <p class="value" id="monthlyIncome">$0</p>
+          </div>
+          <div class="stat">
+            <p class="label">Weekly income</p>
+            <p class="value" id="weeklyIncome">$0</p>
+          </div>
+          <div class="stat highlight">
+            <p class="label">Monthly leftover</p>
+            <p class="value" id="monthlyLeftover">$0</p>
+            <p class="tiny" id="monthlyLeftoverNote">After expenses & goal</p>
+          </div>
+          <div class="stat">
+            <p class="label">Weekly leftover</p>
+            <p class="value" id="weeklyLeftover">$0</p>
+            <p class="tiny">Use this for per-paycheck planning.</p>
+          </div>
+        </div>
+
+        <div class="card gauges">
+          <div class="gauge">
+            <div class="gauge__label">
+              <p class="label">Needs</p>
+              <p class="value" id="needsPercent">0%</p>
+            </div>
+            <div class="bar">
+              <div class="fill" id="needsFill"></div>
+              <div class="marker" style="left:50%">50%</div>
+            </div>
+          </div>
+          <div class="gauge">
+            <div class="gauge__label">
+              <p class="label">Wants</p>
+              <p class="value" id="wantsPercent">0%</p>
+            </div>
+            <div class="bar">
+              <div class="fill" id="wantsFill"></div>
+              <div class="marker" style="left:30%">30%</div>
+            </div>
+          </div>
+          <div class="gauge">
+            <div class="gauge__label">
+              <p class="label">Savings/Goals</p>
+              <p class="value" id="savingsPercent">0%</p>
+            </div>
+            <div class="bar">
+              <div class="fill" id="savingsFill"></div>
+              <div class="marker" style="left:20%">20%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card tips">
+          <p class="eyebrow">Insights</p>
+          <ul id="insights"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
